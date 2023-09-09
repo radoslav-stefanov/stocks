@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from . forms import CreatePortfolioForm
 from .models import Stocks
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 # Create your views here.
 
@@ -12,14 +14,19 @@ def create_portfolio(request):
     context = {'form': form}
 
     if request.method == 'POST':
-        stock_name = request.POST.get('stock_name')
-        stock_price = request.POST.get('stock_price')
+        portfolio_name = request.POST.get('portfolio_name')
+        portfolio_description = request.POST.get('portfolio_description')
 
         stock = Stocks()
 
-        stock.stock_name = stock_name
-        stock.stock_price = stock_price
+        stock.portfolio_name = portfolio_name
+        stock.portfolio_description = portfolio_description
 
         stock.save()
 
+        return HttpResponseRedirect(reverse("portfolio", kwargs={'id': stock.pk}))
+
     return render(request, 'stocks/create-portfolio.html', context)
+
+def portfolio_detail(request, id):
+    return render(request, 'stocks/portfolio-detail.html', {})

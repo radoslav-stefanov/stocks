@@ -5,9 +5,9 @@ from helpers.models import TrackingModel
 # Create your models here.
 
 class Stocks(TrackingModel):
-    stock_name = models.CharField(max_length=100)
-    stock_price = models.FloatField()
+    portfolio_name = models.CharField(max_length=100)
+    portfolio_description = models.TextField()
     #owner = models.ForeignKey(to=User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.stock_name
+        return self.portfolio_name
