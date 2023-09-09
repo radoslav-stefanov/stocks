@@ -1,7 +1,7 @@
 from django import forms
-from . models import Stocks
+from . models import Portfolio
 
 class CreatePortfolioForm(forms.ModelForm):
     class Meta:
-        model = Stocks
+        model = Portfolio
         fields = "__all__"

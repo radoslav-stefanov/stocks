@@ -4,7 +4,7 @@ from helpers.models import TrackingModel
 
 # Create your models here.
 
-class Stocks(TrackingModel):
+class Portfolio(TrackingModel):
     portfolio_name = models.CharField(max_length=100)
     portfolio_description = models.TextField()
     #owner = models.ForeignKey(to=User, on_delete=models.CASCADE)

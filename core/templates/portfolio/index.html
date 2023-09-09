@@ -1,0 +1,35 @@
+{% extends '_partials/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<h1 class="ui header">My List Of Portfolios</h1>
+
+{% if portfolio %}
+
+    <table> 
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for portfolio in portfolios %}
+
+                <tr>
+                    <td>{{ portfolio_name }}</td>
+                    <td>{{ portfolio_description }}</td>
+                </tr>
+
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% else %}
+
+{% endif %}
+
+{% endblock content %}
