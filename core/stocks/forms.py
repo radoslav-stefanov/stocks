@@ -1,6 +1,7 @@
 from django import forms
-from . models import AddTransaction
+from . models import Stocks
 
-class AddTransactionForm(forms.ModelForm):
+class CreatePortfolioForm(forms.ModelForm):
     class Meta:
-        model = AddTransaction
+        model = Stocks
+        fields = "__all__"

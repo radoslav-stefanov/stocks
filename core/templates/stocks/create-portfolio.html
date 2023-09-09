@@ -1,0 +1,18 @@
+{% extends '_partials/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<h3>Create Portfolio</h3>
+
+<form class="ui form" method="POST" action="{% url 'create_portfolio' %}">
+    {{ csrf_token }}    
+    {{ form.as_p }}
+
+    <input class="ui button primary" type="submit" value="Create" />
+
+</form>
+
+
+{% endblock content %}

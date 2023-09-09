@@ -8,7 +8,7 @@
 
 
     <div class="right item">
-      <a href={% url 'add-transaction' %} class="ui primary button">Add Transaction</a>
+      <a href={% url 'create-portfolio' %} class="ui primary button">Create Portfolio</a>
       {% if request.user.is_authenticated %}
       <div class="ui simple dropdown item">
          {{request.user.username}} <i class="dropdown icon"></i>
