@@ -7,8 +7,8 @@ from django.urls import reverse
 # Create your views here.
 
 def index(request):
-    todos=Portfolio.objects.all()
-    context = {'portfolio': portfolio}
+    portfolios = Portfolio.objects.all()
+    context = {'portfolios': portfolios}
     return render(request, 'portfolio/index.html', context)
 
 def create_portfolio(request):
@@ -19,14 +19,14 @@ def create_portfolio(request):
         portfolio_name = request.POST.get('portfolio_name')
         portfolio_description = request.POST.get('portfolio_description')
 
-        stock = portfolio()
+        portfolio = Portfolio()
 
-        stock.portfolio_name = portfolio_name
-        stock.portfolio_description = portfolio_description
+        portfolio.portfolio_name = portfolio_name
+        portfolio.portfolio_description = portfolio_description
 
-        stock.save()
+        portfolio.save()
 
-        return HttpResponseRedirect(reverse("portfolio-detail", kwargs={'id': stock.pk}))
+        return HttpResponseRedirect(reverse("portfolio-detail", kwargs={'id': portfolio.pk}))
 
     return render(request, 'portfolio/create-portfolio.html', context)
 
