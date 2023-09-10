@@ -51,19 +51,20 @@ def add_stock_transaction(request, portfolio_id):
     return render(request, 'portfolio/add_stock_transaction.html', context)
 
 def portfolio_detail(request, id):
-    portfolio=get_object_or_404(Portfolio, pk=id)
-    
-    portfolio = Portfolio.objects.get(pk=id)
-    summary = StockTransaction.objects.values('ticker').annotate(
+    portfolio = get_object_or_404(Portfolio, pk=id)
+    transactions = StockTransaction.objects.filter(portfolio=portfolio)
+    summary = transactions.values('ticker').annotate(
         total_shares=Sum('shares'),
         total_cost=Sum('cost')
-    ).filter(portfolio=portfolio)
+    )
     
     context = {
         'portfolio': portfolio,
-        'summary': summary
+        'summary': summary,
+        'transactions': transactions
     }
     return render(request, 'portfolio/portfolio-detail.html', context)
+
 
 def edit_stock_transaction(request, portfolio_id, id):
     transaction = get_object_or_404(StockTransaction, id=id)
