@@ -1,0 +1,35 @@
+{% extends '_partials/base.html' %}
+
+{% block content %}
+  <div class="ui container">
+    <h1 class="ui header">Add Stock Transaction</h1>
+    <form class="ui form" method="post">
+      {% csrf_token %}
+      <div class="field">
+        <label>Ticker</label>
+        <input type="text" name="ticker" placeholder="Ticker">
+      </div>
+      <div class="field">
+        <label>Date</label>
+        <input type="date" name="date" placeholder="Date">
+      </div>
+      <div class="field">
+        <label>Shares</label>
+        <input type="number" name="shares" placeholder="Shares">
+      </div>
+      <div class="field">
+        <label>Price</label>
+        <input type="text" name="price" placeholder="Price">
+      </div>
+      <div class="field">
+        <label>Fees</label>
+        <input type="text" name="fees" placeholder="Fees">
+      </div>
+      <div class="field">
+        <label>Cost</label>
+        <input type="text" name="cost" placeholder="Cost">
+      </div>
+      <button class="ui button" type="submit">Submit</button>
+    </form>
+  </div>
+{% endblock %}

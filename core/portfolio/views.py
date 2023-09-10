@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from . forms import CreatePortfolioForm
-from .models import Portfolio
+from . forms import StockTransactionForm
+from . models import Portfolio
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
@@ -34,3 +35,13 @@ def create_portfolio(request):
 
 def portfolio_detail(request, id):
     return render(request, 'portfolio/portfolio-detail.html', {})
+
+def add_stock_transaction(request, portfolio_id):
+    form = StockTransactionForm()
+    if request.method == 'POST':
+        form = StockTransactionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse("portfolio-detail", kwargs={'id': portfolio_id}))
+    context = {'form': form}
+    return render(request, 'portfolio/add_stock_transaction.html', context)
