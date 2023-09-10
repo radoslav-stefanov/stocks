@@ -8,7 +8,9 @@ from django.urls import reverse
 
 def index(request):
     portfolios = Portfolio.objects.all()
-    context = {'portfolios': portfolios}
+    count_all_portfolios = portfolios.count()
+    context = {'portfolios': portfolios, 'count_all_portfolios': count_all_portfolios}
+
     return render(request, 'portfolio/index.html', context)
 
 def create_portfolio(request):

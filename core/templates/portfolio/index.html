@@ -8,7 +8,7 @@
 
 {% if portfolios %}
 
-    <table> 
+    <table class="ui table"> 
         <thead>
             <tr>
                 <th>Name</th>
@@ -18,17 +18,44 @@
         </thead>
         <tbody>
             {% for portfolio in portfolios %}
+            <tr>
+                <td>{{ portfolio.portfolio_name }}</td>
+                <td>{{ portfolio.portfolio_description }}</td>
 
-                <tr>
-                    <td>{{ portfolio_name }}</td>
-                    <td>{{ portfolio_description }}</td>
-                </tr>
-
-            {% endfor %}
+                <td>
+                    <a href="" class="ui button">
+                        <i class="eye icon"></i>
+                    </a>
+                    <a href="" class="ui button">
+                        <i class="pencil icon"></i>
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        
         </tbody>
+
+        <tfoot>
+            <tr>
+                <th>
+                    Total: {{ count_all_portfolios }}
+                </th>
+                <th>
+                </th>
+                <th>
+                </th>
+            </tr>
+        </tfoot>
     </table>
 
 {% else %}
+
+<div class="ui message">
+    <div class="header">
+        No items yet.
+    </div>
+    <p>You can create your first portfiolio now. <a href={% url 'create-portfolio' %}>Add new</a></p>
+</div>
 
 {% endif %}
 
