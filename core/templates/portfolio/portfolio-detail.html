@@ -11,6 +11,7 @@
           <th>Ticker</th>
           <th>Total Shares</th>
           <th>Total Cost</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -19,6 +20,14 @@
             <td>{{ item.ticker }}</td>
             <td>{{ item.total_shares }}</td>
             <td>{{ item.total_cost }}</td>
+            <td>
+              <a href="{% url 'edit-stock-transaction' id=item.id %}" class="ui button">
+                <i class="pencil icon"></i>
+              </a>
+              <a href="{% url 'delete-stock-transaction' id=item.id %}" class="ui button">
+                <i class="trash icon"></i>
+              </a>
+            </td>
           </tr>
         {% endfor %}
       </tbody>
