@@ -40,14 +40,19 @@ def portfolio_detail(request, id):
     return render(request, 'portfolio/portfolio-detail.html', {})
 
 def add_stock_transaction(request, portfolio_id):
+    portfolio = get_object_or_404(Portfolio, id=portfolio_id)
     form = StockTransactionForm()
     if request.method == 'POST':
         form = StockTransactionForm(request.POST)
         if form.is_valid():
-            form.save()
+            stock_transaction = form.save(commit=False)
+            stock_transaction.portfolio = portfolio
+            stock_transaction.save()
             return HttpResponseRedirect(reverse("portfolio-detail", kwargs={'id': portfolio_id}))
     context = {'form': form}
     return render(request, 'portfolio/add_stock_transaction.html', context)
+
+
 
 def portfolio_detail(request, id):
     portfolio = get_object_or_404(Portfolio, pk=id)
