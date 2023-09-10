@@ -1,9 +1,27 @@
 {% extends '_partials/base.html' %}
 
-{% load static %}
-
 {% block content %}
-
-<h3>Detail</h3>
-
-{% endblock content %}
+  <div class="ui container">
+    <h1 class="ui header">Portfolio Detail</h1>
+    <h3>Summary for {{ portfolio.portfolio_name }}</h3>
+    
+    <table class="ui celled table">
+      <thead>
+        <tr>
+          <th>Ticker</th>
+          <th>Total Shares</th>
+          <th>Total Cost</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in summary %}
+          <tr>
+            <td>{{ item.ticker }}</td>
+            <td>{{ item.total_shares }}</td>
+            <td>{{ item.total_cost }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

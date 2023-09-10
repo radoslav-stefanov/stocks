@@ -23,7 +23,7 @@
                 <td>{{ portfolio.portfolio_description }}</td>
 
                 <td>
-                    <a href="" class="ui button">
+                    <a href="{% url 'portfolio-detail' id=portfolio.id %}" class="ui button">
                         <i class="eye icon"></i>
                     </a>
                     <a href="" class="ui button">
