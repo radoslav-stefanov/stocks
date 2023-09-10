@@ -3,6 +3,9 @@
 {% block content %}
   <div class="ui container">
     <h1 class="ui header">Portfolio Detail</h1>
+
+    {% include '_partials/messages.html' %}
+
     <h3>Summary for {{ portfolio.portfolio_name }}</h3>
     
     <table class="ui celled table">

@@ -7,6 +7,7 @@ from . forms import CreatePortfolioForm
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.db.models import Sum
+from django.contrib import messages
 
 # Create your views here.
 
@@ -31,6 +32,8 @@ def create_portfolio(request):
         portfolio.portfolio_description = portfolio_description
 
         portfolio.save()
+
+        messages.add_message(request, messages.SUCCESS, 'Portfolio created successfully.')
 
         return HttpResponseRedirect(reverse("portfolio-detail", kwargs={'id': portfolio.pk}))
 
@@ -93,6 +96,9 @@ def edit_portfolio(request, id):
         form = CreatePortfolioForm(request.POST, instance=portfolio)
         if form.is_valid():
             form.save()
+
+            messages.add_message(request, messages.SUCCESS, 'Portfolio updated successfully.')
+
             return redirect('home')
     
     context = {'form': form}
