@@ -36,9 +36,6 @@ def create_portfolio(request):
 
     return render(request, 'portfolio/create-portfolio.html', context)
 
-def portfolio_detail(request, id):
-    return render(request, 'portfolio/portfolio-detail.html', {})
-
 def add_stock_transaction(request, portfolio_id):
     portfolio = get_object_or_404(Portfolio, id=portfolio_id)
     form = StockTransactionForm()
