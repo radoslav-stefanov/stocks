@@ -1,7 +1,5 @@
 {% extends '_partials/base.html' %}
 
-{% load static %}
-
 {% block content %}
 
 <h1 class="ui header">My List Of Portfolios</h1>
@@ -26,7 +24,8 @@
                     <a href="{% url 'portfolio-detail' id=portfolio.id %}" class="ui button">
                         <i class="eye icon"></i>
                     </a>
-                    <a href="" class="ui button">
+                    <!-- Update this line -->
+                    <a href="{% url 'edit-portfolio' id=portfolio.id %}" class="ui button">
                         <i class="pencil icon"></i>
                     </a>
                 </td>

@@ -1,13 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from . forms import CreatePortfolioForm
 from . forms import StockTransactionForm
-from .models import Portfolio, StockTransaction
+from . models import Portfolio, StockTransaction
 from . models import Portfolio
+from . forms import CreatePortfolioForm
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.shortcuts import redirect
 from django.db.models import Sum
-from django.shortcuts import get_object_or_404
 
 # Create your views here.
 
@@ -83,3 +82,16 @@ def delete_stock_transaction(request, portfolio_id, id):
     transaction = get_object_or_404(StockTransaction, id=id)
     transaction.delete()
     return redirect('portfolio-detail', id=portfolio_id)
+
+def edit_portfolio(request, id):
+    portfolio = get_object_or_404(Portfolio, id=id)
+    form = CreatePortfolioForm(instance=portfolio)
+    
+    if request.method == 'POST':
+        form = CreatePortfolioForm(request.POST, instance=portfolio)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    
+    context = {'form': form}
+    return render(request, 'portfolio/edit_portfolio.html', context)

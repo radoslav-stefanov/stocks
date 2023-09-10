@@ -8,4 +8,5 @@ urlpatterns = [
     path('portfolio/<int:portfolio_id>/add_stock_transaction/', views.add_stock_transaction, name='add-stock-transaction'),
     path('portfolio/<int:portfolio_id>/edit_stock_transaction/<int:id>/', views.edit_stock_transaction, name='edit-stock-transaction'),
     path('portfolio/<int:portfolio_id>/delete_stock_transaction/<int:id>/', views.delete_stock_transaction, name='delete-stock-transaction'),
+    path('edit-portfolio/<int:id>/', views.edit_portfolio, name='edit-portfolio'),
 ]
