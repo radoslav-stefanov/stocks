@@ -1,13 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from . forms import CreatePortfolioForm
-from . forms import StockTransactionForm
-from . models import Portfolio, StockTransaction
-from . models import Portfolio
-from . forms import CreatePortfolioForm
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.db.models import Sum
 from django.contrib import messages
+from .forms import CreatePortfolioForm, StockTransactionForm
+from .models import Portfolio, StockTransaction
 
 # Create your views here.
 
@@ -15,7 +12,6 @@ def index(request):
     portfolios = Portfolio.objects.all()
     count_all_portfolios = portfolios.count()
     context = {'portfolios': portfolios, 'count_all_portfolios': count_all_portfolios}
-
     return render(request, 'portfolio/index.html', context)
 
 def create_portfolio(request):

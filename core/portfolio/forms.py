@@ -1,13 +1,12 @@
 from django import forms
-from . models import Portfolio
-from . models import StockTransaction
+from .models import Portfolio, StockTransaction
 
 class CreatePortfolioForm(forms.ModelForm):
     class Meta:
         model = Portfolio
-        fields = "__all__"
+        fields = '__all__'
 
 class StockTransactionForm(forms.ModelForm):
     class Meta:
         model = StockTransaction
-        fields = "__all__"
+        fields = '__all__'
