@@ -2,7 +2,7 @@
 
 {% for message in messages %}
 
-<div class="ui message">
+<div class="ui {{ message.tags }} message">
     {{ message }}
 </div>
 
