@@ -24,10 +24,12 @@
                     <a href="{% url 'portfolio-detail' id=portfolio.id %}" class="ui button">
                         <i class="eye icon"></i>
                     </a>
-                    <!-- Update this line -->
                     <a href="{% url 'edit-portfolio' id=portfolio.id %}" class="ui button">
                         <i class="pencil icon"></i>
                     </a>
+                    <a href="{% url 'delete-portfolio' id=portfolio.id %}" class="ui red button">
+                        <i class="trash icon"></i>
+                    </a>                    
                 </td>
             </tr>
         {% endfor %}

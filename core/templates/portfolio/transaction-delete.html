@@ -3,11 +3,11 @@
 {% block content %}
   <div class="ui container">
     <h1 class="ui header">Confirm Deletion</h1>
-    <p>Are you sure you want to delete the portfolio named "{{ portfolio.portfolio_name }}"?</p>
+    <p>Are you sure you want to delete this transaction?</p>
     <form method="post">
       {% csrf_token %}
       <button type="submit" class="ui red button">Confirm</button>
-      <a href="{% url 'home' %}" class="ui button">Cancel</a>
+      <a href="{{ cancel_url }}" class="ui button">Cancel</a>
     </form>
   </div>
 {% endblock %}
