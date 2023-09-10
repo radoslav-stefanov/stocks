@@ -50,6 +50,9 @@ def add_stock_transaction(request, portfolio_id):
             stock_transaction.save()
             return HttpResponseRedirect(reverse("portfolio-detail", kwargs={'id': portfolio_id}))
     context = {'form': form}
+
+    messages.add_message(request, messages.SUCCESS, 'Stock transaction added successfully.')
+
     return render(request, 'portfolio/add_stock_transaction.html', context)
 
 
@@ -81,6 +84,9 @@ def edit_stock_transaction(request, portfolio_id, id):
             return redirect('portfolio-detail', id=portfolio_id)
     
     context = {'form': form}
+
+    messages.add_message(request, messages.SUCCESS, 'Stock transaction added successfully.')
+
     return render(request, 'portfolio/edit_stock_transaction.html', context)
 
 def delete_stock_transaction(request, portfolio_id, id):
@@ -108,6 +114,7 @@ def delete_portfolio(request, id):
     portfolio = get_object_or_404(Portfolio, id=id)
     if request.method == 'POST':
         portfolio.delete()
+        messages.add_message(request, messages.SUCCESS, 'Portfolio deleted successfully.')
         return HttpResponseRedirect(reverse('home'))
     return render(request, 'portfolio/portfolio-delete.html', {'portfolio': portfolio})
 
@@ -115,5 +122,6 @@ def delete_transaction(request, portfolio_id, id):
     transaction = get_object_or_404(StockTransaction, id=id)
     if request.method == 'POST':
         transaction.delete()
+        messages.add_message(request, messages.SUCCESS, 'Transaction deleted successfully.')
         return HttpResponseRedirect(reverse('portfolio-detail', kwargs={'id': portfolio_id}))
     return render(request, 'portfolio/transaction-delete.html', {'cancel_url': reverse('portfolio-detail', kwargs={'id': portfolio_id})})
