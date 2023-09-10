@@ -63,3 +63,10 @@ def portfolio_detail(request, id):
         'summary': summary
     }
     return render(request, 'portfolio/portfolio-detail.html', context)
+
+def portfolio_delete(request, id):
+    portfolio = Portfolio.objects.get(pk=id)
+    context = {'portfolio': portfolio}
+
+    portfolio.delete()
+    return render(request, 'portfolio/portfolio-delete.html', context)

@@ -1,0 +1,18 @@
+{% extends '_partials/base.html' %}
+
+{% block content %}
+
+<h1 class="ui header">Delete Portfolio</h1>
+
+<form action={% url 'portfolio-delete' todo.id %} class="ui form">
+    {% csrf_token %}
+    <p>
+        Are you sure you want to delete this portfolio?
+    </p>
+
+    <input type="submit" value="YES" class="ui button negative">
+    <a href={% url 'portfolio' portfolio.id %}>Cancel</a>
+
+</form>
+
+{% endblock %}
