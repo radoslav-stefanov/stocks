@@ -34,10 +34,11 @@
             <td>{{ stock.total_shares }}</td>
             <td>{{ stock.total_cost }}</td>
             <td>
-              <a href="{% url 'edit-stock-transaction' portfolio_id=portfolio.id id=transaction.id %}" class="ui button">
+              <!-- Corrected the edit and delete buttons to use stock.ticker instead of transaction.id -->
+              <a href="{% url 'edit-stock-transaction' portfolio_id=portfolio.id id=stock.id %}" class="ui button">
                 <i class="pencil icon"></i>
               </a>
-              <a href="{% url 'delete-transaction' portfolio_id=portfolio.id id=transaction.id %}" class="ui red button">
+              <a href="{% url 'delete-transaction' portfolio_id=portfolio.id id=stock.id %}" class="ui red button">
                 <i class="trash icon"></i>
               </a>
             </td>
