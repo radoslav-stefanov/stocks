@@ -24,7 +24,6 @@
           <th>Ticker</th>
           <th>Total Shares</th>
           <th>Total Cost</th>
-          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -33,18 +32,10 @@
             <td>{{ stock.ticker }}</td>
             <td>{{ stock.total_shares }}</td>
             <td>{{ stock.total_cost }}</td>
-            <td>
-              <!-- Corrected the edit and delete buttons to use stock.ticker instead of transaction.id -->
-              <a href="{% url 'edit-stock-transaction' portfolio_id=portfolio.id id=stock.id %}" class="ui button">
-                <i class="pencil icon"></i>
-              </a>
-              <a href="{% url 'delete-transaction' portfolio_id=portfolio.id id=stock.id %}" class="ui red button">
-                <i class="trash icon"></i>
-              </a>
-            </td>
           </tr>
         {% endfor %}
       </tbody>
+      
     </table>
   </div>
 {% endblock %}
