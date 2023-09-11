@@ -11,4 +11,5 @@ urlpatterns = [
     path('edit-portfolio/<int:id>/', views.edit_portfolio, name='edit-portfolio'),
     path('delete-portfolio/<int:id>/', views.delete_portfolio, name='delete-portfolio'),
     path('portfolio/<int:portfolio_id>/delete-transaction/<int:id>/', views.delete_transaction, name='delete-transaction'),
+    path('portfolio/<id>/transactions/', views.transactions_list, name='transactions-list'),
 ]

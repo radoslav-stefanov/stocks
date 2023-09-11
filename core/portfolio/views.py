@@ -6,6 +6,9 @@ from django.contrib import messages
 from .forms import CreatePortfolioForm, StockTransactionForm
 from .models import Portfolio, StockTransaction
 
+import yfinance as yf
+from decimal import Decimal
+
 # Create your views here.
 
 def index(request):
@@ -51,8 +54,6 @@ def add_stock_transaction(request, portfolio_id):
 
     return render(request, 'portfolio/add_stock_transaction.html', context)
 
-
-
 def portfolio_detail(request, id):
     portfolio = get_object_or_404(Portfolio, pk=id)
     transactions = StockTransaction.objects.filter(portfolio=portfolio)
@@ -60,14 +61,19 @@ def portfolio_detail(request, id):
         total_shares=Sum('shares'),
         total_cost=Sum('cost')
     )
-    
+
+    for stock in summary:
+        ticker = yf.Ticker(stock['ticker'])
+        stock['current_price'] = Decimal(ticker.history(period="1d")['Close'][0])
+        stock['average_price'] = Decimal(stock['total_cost']) / Decimal(stock['total_shares'])
+        stock['p_and_l'] = (stock['current_price'] - stock['average_price']) * Decimal(stock['total_shares'])
+
     context = {
         'portfolio': portfolio,
         'summary': summary,
-        'transactions': transactions
+        'transactions_url': reverse("transactions-list", kwargs={'id': id})
     }
     return render(request, 'portfolio/portfolio-detail.html', context)
-
 
 def edit_stock_transaction(request, portfolio_id, id):
     transaction = get_object_or_404(StockTransaction, id=id)
@@ -121,3 +127,12 @@ def delete_transaction(request, portfolio_id, id):
         messages.add_message(request, messages.SUCCESS, 'Transaction deleted successfully.')
         return HttpResponseRedirect(reverse('portfolio-detail', kwargs={'id': portfolio_id}))
     return render(request, 'portfolio/transaction-delete.html', {'cancel_url': reverse('portfolio-detail', kwargs={'id': portfolio_id})})
+
+def transactions_list(request, id):
+    portfolio = get_object_or_404(Portfolio, pk=id)
+    transactions = StockTransaction.objects.filter(portfolio=portfolio)
+    context = {
+        'portfolio': portfolio,
+        'transactions': transactions
+    }
+    return render(request, 'portfolio/transactions_list.html', context)

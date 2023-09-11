@@ -1,27 +1,22 @@
 {% extends '_partials/base.html' %}
 
 {% block title %}
-  Portfolio Detail
+  Transactions List
 {% endblock title %}
 
 {% block content %}
   <div class="ui container">
-    <h1 class="ui header">Portfolio Detail</h1>
+    <h1 class="ui header">Transactions List for {{ portfolio.portfolio_name }}</h1>
 
     {% include '_partials/messages.html' %}
 
-    <h3>Summary for {{ portfolio.portfolio_name }}</h3>
-
-    <a href="{% url 'add-stock-transaction' portfolio_id=portfolio.id %}" class="ui button">
-      Add New Transaction
-  </a>
-    
     <table class="ui celled table">
       <thead>
         <tr>
           <th>Ticker</th>
-          <th>Total Shares</th>
-          <th>Total Cost</th>
+          <th>Shares</th>
+          <th>Cost</th>
+          <th>Date</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -31,6 +26,7 @@
             <td>{{ transaction.ticker }}</td>
             <td>{{ transaction.shares }}</td>
             <td>{{ transaction.cost }}</td>
+            <td>{{ transaction.date }}</td>
             <td>
               <a href="{% url 'edit-stock-transaction' portfolio_id=portfolio.id id=transaction.id %}" class="ui button">
                 <i class="pencil icon"></i>
@@ -38,7 +34,7 @@
               <a href="{% url 'delete-transaction' portfolio_id=portfolio.id id=transaction.id %}" class="ui red button">
                 <i class="trash icon"></i>
               </a>
-            </td
+            </td>
           </tr>
         {% endfor %}
       </tbody>
