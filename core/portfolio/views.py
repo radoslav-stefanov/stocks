@@ -63,10 +63,12 @@ def portfolio_detail(request, id):
     )
 
     for stock in summary:
-        ticker = yf.Ticker(stock['ticker'])
-        stock['current_price'] = Decimal(ticker.history(period="1d")['Close'][0])
-        stock['average_price'] = Decimal(stock['total_cost']) / Decimal(stock['total_shares'])
-        stock['p_and_l'] = (stock['current_price'] - stock['average_price']) * Decimal(stock['total_shares'])
+        ticker_symbol = stock.get('ticker', None)
+        if ticker_symbol:
+            ticker = yf.Ticker(ticker_symbol)
+            stock['current_price'] = Decimal(ticker.history(period="1d")['Close'].iloc[0])
+            stock['average_price'] = Decimal(stock['total_cost']) / Decimal(stock['total_shares'])
+            stock['p_and_l'] = (stock['current_price'] - stock['average_price']) * Decimal(stock['total_shares'])
 
     context = {
         'portfolio': portfolio,
