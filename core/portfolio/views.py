@@ -9,6 +9,9 @@ from .models import Portfolio, StockTransaction
 import yfinance as yf
 from decimal import Decimal
 
+# Cache
+from django.core.cache import cache
+
 # Create your views here.
 
 def index(request):
@@ -58,31 +61,37 @@ def portfolio_detail(request, id):
     portfolio = get_object_or_404(Portfolio, pk=id)
     transactions = StockTransaction.objects.filter(portfolio=portfolio)
     
-    # Aggregate total shares and total cost for each ticker
-    summary = transactions.values('ticker').annotate(
-        total_shares=Sum('shares'),
-        total_cost=Sum('cost')
-    )
-
-    # Fetch current stock prices
-    tickers = [stock['ticker'] for stock in summary]
-    ticker_str = ' '.join(tickers)
-    data = yf.download(ticker_str, period="1d", group_by='ticker')
-
-    for stock in summary:
-        stock_data = data[stock['ticker']]
-        if not stock_data.empty:
-            stock['current_price'] = stock_data['Close'].iloc[-1]
-        else:
-            stock['current_price'] = 'N/A'
-
+    # Try to get data from cache
+    summary = cache.get(f'portfolio_{id}_summary')
+    
+    if summary is None:
+        # Data not in cache, fetch and store
+        summary = transactions.values('ticker').annotate(
+            total_shares=Sum('shares'),
+            total_cost=Sum('cost')
+        )
+        
+        tickers = [stock['ticker'] for stock in summary]
+        ticker_str = ' '.join(tickers)
+        data = yf.download(ticker_str, period="1d", group_by='ticker')
+        
+        for stock in summary:
+            stock_data = data[stock['ticker']]
+            if not stock_data.empty:
+                stock['current_price'] = stock_data['Close'].iloc[-1]
+            else:
+                stock['current_price'] = 'N/A'
+        
+        # Store data in cache for 5 minutes
+        cache.set(f'portfolio_{id}_summary', summary, 300)
+    
     # Calculate P&L for each stock
     for stock in summary:
         if stock['current_price'] != 'N/A':
             stock['PnL'] = (Decimal(stock['current_price']) - Decimal(stock['total_cost'] / stock['total_shares'])) * stock['total_shares']
         else:
             stock['PnL'] = 'N/A'
-
+    
     context = {
         'portfolio': portfolio,
         'summary': summary,
