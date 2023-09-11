@@ -14,8 +14,10 @@
 
     <a href="{% url 'add-stock-transaction' portfolio_id=portfolio.id %}" class="ui button">
       Add New Transaction
-  </a>
-    
+    </a>
+
+    <a href="{{ transactions_url }}" class="ui button">View Transactions</a>
+
     <table class="ui celled table">
       <thead>
         <tr>
