@@ -14,6 +14,10 @@ from django.core.cache import cache
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+# SPY
+from datetime import datetime, timedelta
+import pandas_datareader.data as web
+
 # Create your views here.
 
 def index(request):
@@ -43,11 +47,45 @@ def create_portfolio(request):
 
     return render(request, 'portfolio/create-portfolio.html', context)
 
+# Signal receiver to clear cache
 @receiver(post_save, sender=StockTransaction)
 def clear_portfolio_cache(sender, **kwargs):
     portfolio_id = kwargs['instance'].portfolio.id
     cache_key = f'portfolio_{portfolio_id}_summary'
     cache.delete(cache_key)
+
+def compare_to_spy(request, id):
+    portfolio = get_object_or_404(Portfolio, pk=id)
+    transactions = StockTransaction.objects.filter(portfolio=portfolio)
+    
+    # Fetch historical data for SPY
+    spy_data = web.DataReader('SPY', 'yahoo', datetime.now() - timedelta(days=365), datetime.now())
+    spy_data['Adj Close'] = spy_data['Adj Close'] / spy_data['Adj Close'].iloc[0]
+    
+    comparison_data = {}
+    
+    for transaction in transactions:
+        ticker = transaction.ticker
+        purchase_date = transaction.date
+        
+        # Fetch historical data for the stock
+        stock_data = web.DataReader(ticker, 'yahoo', purchase_date, datetime.now())
+        stock_data['Adj Close'] = stock_data['Adj Close'] / stock_data['Adj Close'].iloc[0]
+        
+        # Calculate performance against SPY
+        performance = stock_data['Adj Close'].iloc[-1] / spy_data['Adj Close'].iloc[-1]
+        
+        comparison_data[ticker] = {
+            'performance': performance,
+            'against_spy': performance - 1
+        }
+    
+    context = {
+        'portfolio': portfolio,
+        'comparison_data': comparison_data
+    }
+    
+    return render(request, 'portfolio/compare_to_spy.html', context)
 
 def add_stock_transaction(request, portfolio_id):
     portfolio = get_object_or_404(Portfolio, id=portfolio_id)
