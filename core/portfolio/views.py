@@ -57,7 +57,9 @@ def add_stock_transaction(request, portfolio_id):
 def portfolio_detail(request, id):
     portfolio = get_object_or_404(Portfolio, pk=id)
     transactions = StockTransaction.objects.filter(portfolio=portfolio)
-    summary = transactions.values('id', 'ticker').annotate(
+    
+    # Aggregate total shares and total cost for each ticker
+    summary = transactions.values('ticker').annotate(
         total_shares=Sum('shares'),
         total_cost=Sum('cost')
     )
