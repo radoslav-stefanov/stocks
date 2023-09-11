@@ -11,6 +11,8 @@ from decimal import Decimal
 
 # Cache
 from django.core.cache import cache
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Create your views here.
 
@@ -41,6 +43,12 @@ def create_portfolio(request):
 
     return render(request, 'portfolio/create-portfolio.html', context)
 
+@receiver(post_save, sender=StockTransaction)
+def clear_portfolio_cache(sender, **kwargs):
+    portfolio_id = kwargs['instance'].portfolio.id
+    cache_key = f'portfolio_{portfolio_id}_summary'
+    cache.delete(cache_key)
+
 def add_stock_transaction(request, portfolio_id):
     portfolio = get_object_or_404(Portfolio, id=portfolio_id)
     form = StockTransactionForm()
@@ -50,6 +58,10 @@ def add_stock_transaction(request, portfolio_id):
             stock_transaction = form.save(commit=False)
             stock_transaction.portfolio = portfolio
             stock_transaction.save()
+            
+            # Clear cache for this portfolio
+            clear_portfolio_cache(sender=StockTransaction, instance=stock_transaction)
+            
             return HttpResponseRedirect(reverse("portfolio-detail", kwargs={'id': portfolio_id}))
     context = {'form': form}
 
