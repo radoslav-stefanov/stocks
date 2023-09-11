@@ -76,6 +76,13 @@ def portfolio_detail(request, id):
         else:
             stock['current_price'] = 'N/A'
 
+    # Calculate P&L for each stock
+    for stock in summary:
+        if stock['current_price'] != 'N/A':
+            stock['PnL'] = (Decimal(stock['current_price']) - Decimal(stock['total_cost'] / stock['total_shares'])) * stock['total_shares']
+        else:
+            stock['PnL'] = 'N/A'
+
     context = {
         'portfolio': portfolio,
         'summary': summary,
