@@ -64,6 +64,18 @@ def portfolio_detail(request, id):
         total_cost=Sum('cost')
     )
 
+    # Fetch current stock prices
+    tickers = [stock['ticker'] for stock in summary]
+    ticker_str = ' '.join(tickers)
+    data = yf.download(ticker_str, period="1d", group_by='ticker')
+
+    for stock in summary:
+        stock_data = data[stock['ticker']]
+        if not stock_data.empty:
+            stock['current_price'] = stock_data['Close'].iloc[-1]
+        else:
+            stock['current_price'] = 'N/A'
+
     context = {
         'portfolio': portfolio,
         'summary': summary,

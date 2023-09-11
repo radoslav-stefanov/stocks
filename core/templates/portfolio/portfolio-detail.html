@@ -22,6 +22,7 @@
       <thead>
         <tr>
           <th>Ticker</th>
+          <th>Current Price</th> 
           <th>Total Shares</th>
           <th>Total Cost</th>
         </tr>
@@ -30,6 +31,7 @@
         {% for stock in summary %}
           <tr>
             <td>{{ stock.ticker }}</td>
+            <td>{{ stock.current_price }}</td>
             <td>{{ stock.total_shares }}</td>
             <td>{{ stock.total_cost }}</td>
           </tr>
