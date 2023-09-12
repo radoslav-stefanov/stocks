@@ -164,9 +164,25 @@ def delete_transaction(request, portfolio_id, id):
         return HttpResponseRedirect(reverse('portfolio-detail', kwargs={'id': portfolio_id}))
     return render(request, 'portfolio/transaction-delete.html', {'cancel_url': reverse('portfolio-detail', kwargs={'id': portfolio_id})})
 
+def fetch_spy_price_on_date(date):
+    spy = yf.Ticker("SPY")
+    historical_data = spy.history(period="1d", start=date, end=date)
+    return historical_data['Close'][0] if not historical_data.empty else None
+
 def transactions_list(request, id):
     portfolio = get_object_or_404(Portfolio, pk=id)
-    transactions = StockTransaction.objects.filter(portfolio=portfolio)
+    #transactions = StockTransaction.objects.filter(portfolio=portfolio)
+    transactions = StockTransaction.objects.filter(portfolio_id=id)
+
+    for transaction in transactions:
+        # Fetch current SPY price (you can use yfinance or any other method)
+        current_spy_price = fetch_spy_price_on_date(transaction.date)
+        transaction.performance_vs_spy = (current_spy_price - transaction.spy_price_at_purchase) / transaction.spy_price_at_purchase * 100
+
+        # Calculate performance vs SPY
+        if current_spy_price and transaction.spy_price_at_purchase:
+            transaction.performance_vs_spy = ((current_spy_price - transaction.spy_price_at_purchase) / transaction.spy_price_at_purchase) * 100
+
     context = {
         'portfolio': portfolio,
         'transactions': transactions
