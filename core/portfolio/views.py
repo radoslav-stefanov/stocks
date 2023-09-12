@@ -167,6 +167,15 @@ def delete_transaction(request, portfolio_id, id):
 def transactions_list(request, id):
     portfolio = get_object_or_404(Portfolio, pk=id)
     transactions = StockTransaction.objects.filter(portfolio=portfolio)
+
+    # Fetch SPY prices for each transaction date
+    spy_prices = {}
+    for transaction in transactions:
+        date_str = transaction.date.strftime('%Y-%m-%d')
+        spy_data = yf.download('SPY', start=date_str, end=date_str)
+        spy_prices[date_str] = spy_data['Close'].iloc[0] if not spy_data.empty else 'N/A'
+        transaction.spy_price = spy_prices[date_str]
+
     context = {
         'portfolio': portfolio,
         'transactions': transactions
