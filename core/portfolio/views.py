@@ -73,6 +73,12 @@ def portfolio_detail(request, id):
     portfolio = get_object_or_404(Portfolio, pk=id)
     transactions = StockTransaction.objects.filter(portfolio=portfolio)
     
+    # Initialize context
+    context = {
+        'portfolio': portfolio,
+        'transactions_url': reverse("transactions-list", kwargs={'id': id})
+    }
+    
     # Try to get data from cache
     summary = cache.get(f'portfolio_{id}_summary')
     
@@ -85,12 +91,26 @@ def portfolio_detail(request, id):
         
         tickers = [stock['ticker'] for stock in summary]
         ticker_str = ' '.join(tickers)
+        
+        # Check for empty tickers
+        if not ticker_str:
+            messages.add_message(request, messages.ERROR, 'No tickers available.')
+            return render(request, 'portfolio/portfolio-detail.html', context)
+        
         data = yf.download(ticker_str, period="1d", group_by='ticker')
         
+        # Check for empty data
+        if data.empty:
+            messages.add_message(request, messages.ERROR, 'No data available for the given tickers.')
+            return render(request, 'portfolio/portfolio-detail.html', context)
+        
         for stock in summary:
-            stock_data = data[stock['ticker']]
-            if not stock_data.empty:
-                stock['current_price'] = stock_data['Close'].iloc[-1]
+            if stock['ticker'] in data.columns:
+                stock_data = data[stock['ticker']]
+                if not stock_data.empty:
+                    stock['current_price'] = stock_data['Close'].iloc[-1]
+                else:
+                    stock['current_price'] = 'N/A'
             else:
                 stock['current_price'] = 'N/A'
         
@@ -104,11 +124,7 @@ def portfolio_detail(request, id):
         else:
             stock['PnL'] = 'N/A'
     
-    context = {
-        'portfolio': portfolio,
-        'summary': summary,
-        'transactions_url': reverse("transactions-list", kwargs={'id': id})
-    }
+    context['summary'] = summary
     return render(request, 'portfolio/portfolio-detail.html', context)
 
 def edit_stock_transaction(request, portfolio_id, id):
