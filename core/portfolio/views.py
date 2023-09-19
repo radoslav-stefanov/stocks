@@ -9,11 +9,6 @@ from .models import Portfolio, StockTransaction
 import yfinance as yf
 from decimal import Decimal
 
-# Cache
-from django.core.cache import cache
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-
 # Create your views here.
 
 def index(request):
@@ -43,12 +38,6 @@ def create_portfolio(request):
 
     return render(request, 'portfolio/create-portfolio.html', context)
 
-@receiver(post_save, sender=StockTransaction)
-def clear_portfolio_cache(sender, **kwargs):
-    portfolio_id = kwargs['instance'].portfolio.id
-    cache_key = f'portfolio_{portfolio_id}_summary'
-    cache.delete(cache_key)
-
 def add_stock_transaction(request, portfolio_id):
     portfolio = get_object_or_404(Portfolio, id=portfolio_id)
     form = StockTransactionForm()
@@ -58,9 +47,6 @@ def add_stock_transaction(request, portfolio_id):
             stock_transaction = form.save(commit=False)
             stock_transaction.portfolio = portfolio
             stock_transaction.save()
-            
-            # Clear cache for this portfolio
-            clear_portfolio_cache(sender=StockTransaction, instance=stock_transaction)
             
             return HttpResponseRedirect(reverse("portfolio-detail", kwargs={'id': portfolio_id}))
     context = {'form': form}
@@ -79,43 +65,36 @@ def portfolio_detail(request, id):
         'transactions_url': reverse("transactions-list", kwargs={'id': id})
     }
     
-    # Try to get data from cache
-    summary = cache.get(f'portfolio_{id}_summary')
+    # Fetch data directly without using cache
+    summary = transactions.values('ticker').annotate(
+        total_shares=Sum('shares'),
+        total_cost=Sum('cost')
+    )
     
-    if summary is None:
-        # Data not in cache, fetch and store
-        summary = transactions.values('ticker').annotate(
-            total_shares=Sum('shares'),
-            total_cost=Sum('cost')
-        )
-        
-        tickers = [stock['ticker'] for stock in summary]
-        ticker_str = ' '.join(tickers)
-        
-        # Check for empty tickers
-        if not ticker_str:
-            messages.add_message(request, messages.ERROR, 'No tickers available.')
-            return render(request, 'portfolio/portfolio-detail.html', context)
-        
-        data = yf.download(ticker_str, period="1d", group_by='ticker')
-        
-        # Check for empty data
-        if data.empty:
-            messages.add_message(request, messages.ERROR, 'No data available for the given tickers.')
-            return render(request, 'portfolio/portfolio-detail.html', context)
-        
-        for stock in summary:
-            if stock['ticker'] in data.columns:
-                stock_data = data[stock['ticker']]
-                if not stock_data.empty:
-                    stock['current_price'] = stock_data['Close'].iloc[-1]
-                else:
-                    stock['current_price'] = 'N/A'
+    tickers = [stock['ticker'] for stock in summary]
+    ticker_str = ' '.join(tickers)
+    
+    # Check for empty tickers
+    if not ticker_str:
+        messages.add_message(request, messages.ERROR, 'No tickers available.')
+        return render(request, 'portfolio/portfolio-detail.html', context)
+    
+    data = yf.download(ticker_str, period="1d", group_by='ticker')
+    
+    # Check for empty data
+    if data.empty:
+        messages.add_message(request, messages.ERROR, 'No data available for the given tickers.')
+        return render(request, 'portfolio/portfolio-detail.html', context)
+    
+    for stock in summary:
+        if stock['ticker'] in data.columns:
+            stock_data = data[stock['ticker']]
+            if not stock_data.empty:
+                stock['current_price'] = stock_data['Close'].iloc[-1]
             else:
                 stock['current_price'] = 'N/A'
-        
-        # Store data in cache for 5 minutes
-        cache.set(f'portfolio_{id}_summary', summary, 300)
+        else:
+            stock['current_price'] = 'N/A'
     
     # Calculate P&L for each stock
     for stock in summary:
