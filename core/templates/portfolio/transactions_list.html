@@ -22,18 +22,18 @@
         </tr>
       </thead>
       <tbody>
-        {% for transaction in transactions %}
+        {% for transaction in transactions_with_price %}
           <tr>
-            <td>{{ transaction.ticker }}</td>
-            <td>{{ transaction.shares }}</td>
-            <td>{{ transaction.cost }}</td>
-            <td>{{ transaction.date }}</td>
-            <td>{{ adjusted_close_price }}</td>
+            <td>{{ transaction.transaction.ticker }}</td>
+            <td>{{ transaction.transaction.shares }}</td>
+            <td>{{ transaction.transaction.cost }}</td>
+            <td>{{ transaction.transaction.date }}</td>
+            <td>{{ transaction.adjusted_close_price }}</td>  <!-- Display adjusted_close_price -->
             <td>
-              <a href="{% url 'edit-stock-transaction' portfolio_id=portfolio.id id=transaction.id %}" class="ui button">
+              <a href="{% url 'edit-stock-transaction' portfolio_id=portfolio.id id=transaction.transaction.id %}" class="ui button">
                 <i class="pencil icon"></i>
               </a>
-              <a href="{% url 'delete-transaction' portfolio_id=portfolio.id id=transaction.id %}" class="ui red button">
+              <a href="{% url 'delete-transaction' portfolio_id=portfolio.id id=transaction.transaction.id %}" class="ui red button">
                 <i class="trash icon"></i>
               </a>
             </td>

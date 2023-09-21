@@ -166,17 +166,25 @@ def delete_transaction(request, portfolio_id, id):
 def transactions_list(request, id):
     portfolio = get_object_or_404(Portfolio, pk=id)
     transactions = StockTransaction.objects.filter(portfolio=portfolio)
-    target_date = datetime.strptime('1993-02-11', '%Y-%m-%d').date()
-    try:
-        record = DataSpy.objects.get(date=target_date)
-        adjusted_close_price = record.adjusted_close_price
-    except DataSpy.DoesNotExist:
-        adjusted_close_price = "Date not found"
+    
+    # Create a list to store transactions along with their adjusted_close_price
+    transactions_with_price = []
+    
+    for transaction in transactions:
+        try:
+            record = DataSpy.objects.get(date=transaction.date)
+            adjusted_close_price = record.adjusted_close_price
+        except DataSpy.DoesNotExist:
+            adjusted_close_price = "Date not found"
+        
+        transactions_with_price.append({
+            'transaction': transaction,
+            'adjusted_close_price': adjusted_close_price
+        })
 
     context = {
         'portfolio': portfolio,
-        'transactions': transactions,
-        'adjusted_close_price': adjusted_close_price,
+        'transactions_with_price': transactions_with_price,
     }
     return render(request, 'portfolio/transactions_list.html', context)
 
