@@ -6,6 +6,10 @@ from django.contrib import messages
 from .forms import CreatePortfolioForm, StockTransactionForm
 from .models import Portfolio, StockTransaction
 
+from django.http import JsonResponse
+from .models import DataSpy
+from datetime import datetime
+
 import yfinance as yf
 from decimal import Decimal
 
@@ -162,8 +166,24 @@ def delete_transaction(request, portfolio_id, id):
 def transactions_list(request, id):
     portfolio = get_object_or_404(Portfolio, pk=id)
     transactions = StockTransaction.objects.filter(portfolio=portfolio)
+    target_date = datetime.strptime('1993-02-11', '%Y-%m-%d').date()
+    try:
+        record = DataSpy.objects.get(date=target_date)
+        adjusted_close_price = record.adjusted_close_price
+    except DataSpy.DoesNotExist:
+        adjusted_close_price = "Date not found"
+
     context = {
         'portfolio': portfolio,
-        'transactions': transactions
+        'transactions': transactions,
+        'adjusted_close_price': adjusted_close_price,
     }
     return render(request, 'portfolio/transactions_list.html', context)
+
+def get_adjusted_close_price(request):
+    target_date = datetime.strptime('1993-02-11', '%Y-%m-%d').date()
+    try:
+        record = DataSpy.objects.get(date=target_date)
+        return JsonResponse({'adjusted_close_price': record.adjusted_close_price})
+    except DataSpy.DoesNotExist:
+        return JsonResponse({'error': 'Date not found'}, status=404)

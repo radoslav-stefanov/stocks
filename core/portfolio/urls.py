@@ -12,4 +12,5 @@ urlpatterns = [
     path('delete-portfolio/<int:id>/', views.delete_portfolio, name='delete-portfolio'),
     path('portfolio/<int:portfolio_id>/delete-transaction/<int:id>/', views.delete_transaction, name='delete-transaction'),
     path('portfolio/<id>/transactions/', views.transactions_list, name='transactions-list'),
+    path('get_adjusted_close_price/', views.get_adjusted_close_price, name='get_adjusted_close_price'),
 ]
