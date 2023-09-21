@@ -20,3 +20,11 @@ class StockTransaction(TrackingModel):
 
     def __str__(self):
         return f"{self.ticker} - {self.date}"
+
+class DataSpy(models.Model):
+    date = models.DateField(primary_key=True)
+    adjusted_close_price = models.FloatField()
+    volume = models.BigIntegerField()
+
+    class Meta:
+        db_table = 'data_spy'
