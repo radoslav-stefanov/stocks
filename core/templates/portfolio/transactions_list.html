@@ -19,6 +19,7 @@
           <th>Date</th>
           <th>SPY</th>
           <th>SPY Shares</th>
+          <th>SPY P&L</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -31,6 +32,7 @@
             <td>{{ transaction.transaction.date }}</td>
             <td>{{ transaction.adjusted_close_price }}</td>
             <td>{{ transaction.spy_shares }}</td>
+            <td>{{ transaction.spy_pl }}</td>
             <td>
               <a href="{% url 'edit-stock-transaction' portfolio_id=portfolio.id id=transaction.transaction.id %}" class="ui button">
                 <i class="pencil icon"></i>

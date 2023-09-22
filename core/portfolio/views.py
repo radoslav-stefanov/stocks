@@ -174,17 +174,27 @@ def transactions_list(request, id):
         try:
             record = DataSpy.objects.get(date=transaction.date)
             adjusted_close_price = Decimal(record.adjusted_close_price)
-            adjusted_close_price = round(adjusted_close_price, 2) 
+            adjusted_close_price = round(adjusted_close_price, 2)
+            
+            latest_spy_record = DataSpy.objects.latest('date')
+            latest_spy_price = Decimal(latest_spy_record.adjusted_close_price)
+            latest_spy_price = round(latest_spy_price, 2)
+            
             spy_shares = transaction.cost / adjusted_close_price
             spy_shares = round(spy_shares, 2)
+            
+            spy_pl = (latest_spy_price - adjusted_close_price) * spy_shares
+            spy_pl = round(spy_pl, 2)
         except DataSpy.DoesNotExist:
             adjusted_close_price = "Date not found"
             spy_shares = "N/A"
+            spy_pl = "N/A"
         
         transactions_with_price.append({
             'transaction': transaction,
             'adjusted_close_price': adjusted_close_price,
-            'spy_shares': spy_shares
+            'spy_shares': spy_shares,
+            'spy_pl': spy_pl
         })
 
     context = {
